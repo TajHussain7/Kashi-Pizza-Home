@@ -17,7 +17,7 @@
       <div class="container mx-auto flex justify-between items-center">
         <div>
           <img
-            src="logo.png"
+            src="Logo.png"
             alt="Kashi Pizza Home Logo"
             class="h-20 w-20 object-contain"
           />
@@ -196,61 +196,198 @@
               </button>
             </div>
           </section>
-          <section id="invoice" class="hidden bg-white p-6">
-            <img
-              id="printLogo"
-              src="logo.png"
-              alt="Shop Logo"
-              class="block mx-auto mb-4"
-            />
-            <h2 class="text-2xl font-bold text-center mb-2 text-yellow-700">
-              Kashi Pizza Home
-            </h2>
-            <p class="text-center mb-2 text-gray-600">
-              123 Food Street, City, Country
-            </p>
-            <p class="text-center mb-2 text-gray-600">
-              Invoice Number: <span id="invoiceNumber"></span>
-            </p>
-            <p class="text-center mb-2 text-gray-600">
-              Invoice Date: <span id="invoiceDate"></span>
-            </p>
-            <p class="text-center mb-4 text-gray-600">
-              Customer: <span id="invoiceCustomerName">N/A</span>
-            </p>
-            <table class="w-full border-collapse mb-4">
+          <section
+            id="invoice"
+            class="hidden bg-white p-6"
+            style="
+              font-family: Arial, Helvetica, sans-serif;
+              max-width: 900px;
+              margin: 0 auto;
+              border: 1px solid #222;
+            "
+          >
+            <!-- Header -->
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 24px;
+              "
+            >
+              <img
+                id="printLogo"
+                src="Logo.png"
+                alt="Shop Logo"
+                style="height: 70px; width: 70px; object-fit: contain"
+              />
+              <h2
+                style="
+                  font-size: 2rem;
+                  font-weight: bold;
+                  color: #d97706;
+                  text-align: center;
+                  flex-grow: 1;
+                "
+              >
+                Kashi Pizza Home
+              </h2>
+              <div style="text-align: right; font-size: 14px; max-width: 200px">
+                <em>The Taste You Love!</em>
+              </div>
+            </div>
+
+            <!-- Invoice Info -->
+            <table
+              style="
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 12px;
+                font-size: 15px;
+              "
+            >
+              <tbody>
+                <tr>
+                  <td
+                    style="
+                      border: 1px solid #222;
+                      padding: 8px;
+                      font-weight: bold;
+                      width: 25%;
+                    "
+                  >
+                    Invoice Number
+                  </td>
+                  <td style="border: 1px solid #222; padding: 8px; width: 25%">
+                    <span id="invoiceNumber"></span>
+                  </td>
+                  <td
+                    style="
+                      border: 1px solid #222;
+                      padding: 8px;
+                      font-weight: bold;
+                      width: 25%;
+                    "
+                  >
+                    Invoice Date
+                  </td>
+                  <td style="border: 1px solid #222; padding: 8px; width: 25%">
+                    <span id="invoiceDate"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style="
+                      border: 1px solid #222;
+                      padding: 8px;
+                      font-weight: bold;
+                    "
+                  >
+                    Customer Name
+                  </td>
+                  <td
+                    colspan="3"
+                    style="
+                      border: 1px solid #222;
+                      padding: 8px;
+                      font-weight: bold;
+                      color: #e11d48;
+                    "
+                  >
+                    <span id="invoiceCustomerName">N/A</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Invoice Items -->
+            <table
+              style="
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 24px;
+                font-size: 15px;
+              "
+            >
               <thead>
-                <tr class="bg-gradient-to-r from-yellow-100 to-red-100">
-                  <th class="p-2 border text-yellow-700">Item Name</th>
-                  <th class="p-2 border text-yellow-700">Quantity</th>
-                  <th class="p-2 border text-yellow-700">Price (PKR)</th>
-                  <th class="p-2 border text-yellow-700">Subtotal (PKR)</th>
+                <tr style="background: #f5f5f5">
+                  <th
+                    style="
+                      border: 1px solid #222;
+                      padding: 8px;
+                      text-align: left;
+                    "
+                  >
+                    Item Name
+                  </th>
+                  <th
+                    style="
+                      border: 1px solid #222;
+                      padding: 8px;
+                      text-align: center;
+                      width: 100px;
+                    "
+                  >
+                    Quantity
+                  </th>
+                  <th
+                    style="
+                      border: 1px solid #222;
+                      padding: 8px;
+                      text-align: right;
+                    "
+                  >
+                    Price
+                  </th>
+                  <th
+                    style="
+                      border: 1px solid #222;
+                      padding: 8px;
+                      text-align: right;
+                    "
+                  >
+                    Subtotal
+                  </th>
                 </tr>
               </thead>
-              <tbody id="invoiceItemsTableBody"></tbody>
+              <tbody id="invoiceItemsTableBody">
+                <!-- Dynamically injected items here -->
+              </tbody>
               <tfoot>
-                <tr class="font-bold bg-yellow-100">
-                  <td colspan="3" class="p-2 border text-right text-red-600">
-                    Total:
+                <tr>
+                  <td
+                    colspan="3"
+                    style="
+                      border: 1px solid #222;
+                      padding: 8px;
+                      text-align: right;
+                      font-weight: bold;
+                    "
+                  >
+                    Total Price
                   </td>
                   <td
                     id="invoiceGrandTotal"
-                    class="p-2 border text-red-600"
+                    style="
+                      border: 1px solid #222;
+                      padding: 8px;
+                      text-align: right;
+                      font-weight: bold;
+                    "
                   ></td>
                 </tr>
               </tfoot>
             </table>
-            <p class="text-center mb-2 text-gray-600">
-              Shop Address: Awan Shareef Road Dawood Plazza near Akhtar Public
-              School, JalalPur Sobtain, Gujrat, Pakistan
-            </p>
-            <p class="text-center mb-2 text-gray-600">
-              Phone: +92304-0600910, +92313-6978075
-            </p>
-            <p class="text-center mb-2 text-gray-600">
-              Payment: EasyPaisa, JazzCash
-            </p>
-            <p class="text-center text-gray-600">Thank you for your Order!</p>
+
+            <!-- Footer -->
+            <div style="margin-top: 16px; font-size: 15px">
+              <div>
+                <strong>Shop Address:</strong> Awan Shareef Road, Dawood Plazza,
+                near Akhtar Public School, JalalPur Sobtain, Gujrat, Pakistan
+              </div>
+              <div><strong>Phone:</strong> +92304-0600910, +92313-6978075</div>
+              <div style="margin-top: 8px">Thank you for your Order!</div>
+            </div>
           </section>
         </main>
       </div>

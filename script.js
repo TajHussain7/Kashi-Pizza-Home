@@ -430,14 +430,55 @@ function loadAndDisplayManagedItems(selectedCat = null) {
   const filteredItems = items.filter(
     (item) => item.category === categoryToDisplay
   );
+  // --- Pizza size options for dashboard (menu management) ---
+  // Fix: Show all pizza sizes for 'Regular Pizza' and 'Special Pizza' categories as well
+  if (
+    categoryToDisplay === "Regular Pizza" ||
+    categoryToDisplay === "Pizzas" ||
+    categoryToDisplay === "Special Pizza"
+  ) {
+    const pizzaSizes = ["Small", "Medium", "Large", "Family"];
+    const pizzaItems = items.filter(
+      (item) => item.category === categoryToDisplay
+    );
+    pizzaItems.forEach((item) => {
+      if (item.sizePrices) {
+        pizzaSizes.forEach((size) => {
+          if (item.sizePrices[size]) {
+            const row = document.createElement("tr");
+            const displayName = `${item.name} (${size})`;
+            const displayPrice = item.sizePrices[size];
+            row.innerHTML = `
+              <td class="p-2 border text-sm font-medium">${categoryToDisplay}</td>
+              <td class="p-2 border">${displayName}</td>
+              <td class="p-2 border">PKR ${formatPrice(displayPrice)}</td>
+              <td class="p-2 border">
+                <button class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600 mr-2" onclick="editItem(${
+                  item.id
+                }, '${size}')">Update</button>
+                <button class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" onclick="deleteItem(${
+                  item.id
+                }, '${size}')">Delete</button>
+              </td>
+            `;
+            managedItemsListBody.appendChild(row);
+          }
+        });
+      }
+    });
+    return; // Prevent duplicate display
+  }
   filteredItems.forEach((item) => {
-    let displayName = item.name;
-    let displayPrice = item.price;
-    if (item.category === "Pizzas" && item.sizePrices) {
+    if (
+      (item.category === "Pizzas" ||
+        item.category === "Regular Pizza" ||
+        item.category === "Special Pizza") &&
+      item.sizePrices
+    ) {
       for (const size in item.sizePrices) {
         const row = document.createElement("tr");
-        displayName = `${item.name} (${size})`;
-        displayPrice = item.sizePrices[size];
+        const displayName = `${item.name} (${size})`;
+        const displayPrice = item.sizePrices[size];
         row.innerHTML = `
           <td class="p-2 border text-sm font-medium">${item.category}</td>
           <td class="p-2 border">${displayName}</td>
@@ -457,8 +498,8 @@ function loadAndDisplayManagedItems(selectedCat = null) {
       const row = document.createElement("tr");
       row.innerHTML = `
         <td class="p-2 border text-sm font-medium">${item.category}</td>
-        <td class="p-2 border">${displayName}</td>
-        <td class="p-2 border">PKR ${formatPrice(displayPrice)}</td>
+        <td class="p-2 border">${item.name}</td>
+        <td class="p-2 border">PKR ${formatPrice(item.price)}</td>
         <td class="p-2 border">
           <button class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600 mr-2" onclick="editItem(${
             item.id
