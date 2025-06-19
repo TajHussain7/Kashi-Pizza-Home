@@ -639,10 +639,22 @@ function handleGenerateAndPrintInvoice() {
   const customerName = customerNameInput.value.trim();
   invoiceNumberElement.textContent = `INV-${Date.now()}`;
   invoiceDateElement.textContent = new Date().toLocaleDateString();
+  // Set customer name in one row, no line breaks
   invoiceCustomerNameElement.textContent = customerName || "N/A";
   invoiceItemsTableBodyElement.innerHTML = "";
   let grandTotal = 0;
+
+  // --- Group items with the same name into one row ---
+  const groupedItems = {};
   currentOrder.forEach((item) => {
+    if (!groupedItems[item.name]) {
+      groupedItems[item.name] = { ...item };
+    } else {
+      groupedItems[item.name].quantity += item.quantity;
+      groupedItems[item.name].price = item.price; // keep latest price
+    }
+  });
+  Object.values(groupedItems).forEach((item) => {
     const row = invoiceItemsTableBodyElement.insertRow();
     const itemTotal = item.price * item.quantity;
     grandTotal += itemTotal;
@@ -653,13 +665,32 @@ function handleGenerateAndPrintInvoice() {
   });
   invoiceGrandTotalElement.textContent = `PKR ${formatPrice(grandTotal)}`;
 
+  // --- Ensure all invoice info is on one page, add tagline ---
+  let tagline = document.getElementById("invoiceTagline");
+  if (!tagline) {
+    tagline = document.createElement("p");
+    tagline.id = "invoiceTagline";
+    tagline.className = "text-center text-yellow-700 font-semibold mb-2";
+    tagline.textContent = "Adding Taste to your Life";
+    invoiceElement.insertBefore(tagline, invoiceElement.firstChild.nextSibling);
+  }
+
+  // Show the invoice section and hide others for printing
   invoiceElement.classList.remove("hidden");
-  document.querySelector("body").classList.add("print-invoice-active"); // Target body for broader style control
+  document.getElementById("categoryManagementSection").classList.add("hidden");
+  document.getElementById("invoiceGeneratorView").classList.add("hidden");
+
+  // Print
   window.print();
 
-  // Cleanup after print dialog
+  // After print, hide invoice and show main UI again
   invoiceElement.classList.add("hidden");
-  document.querySelector("body").classList.remove("print-invoice-active");
+  document
+    .getElementById("categoryManagementSection")
+    .classList.remove("hidden");
+  document.getElementById("invoiceGeneratorView").classList.remove("hidden");
+
+  // Reset order
   currentOrder = [];
   localStorage.removeItem("currentOrder");
   renderCurrentInvoiceItems();
