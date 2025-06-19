@@ -22,7 +22,7 @@
             class="h-20 w-20 object-contain"
           />
         </div>
-        <h1 class="text-2xl font-bold text-yellow-600">Kashi Pizza Home</h1>
+        <h1 class="text-4xl font-bold text-yellow-600">Kashi Pizza Home</h1>
         <div class="flex items-center space-x-2">
           <a
             href="https://wa.me/923040600910"
@@ -30,7 +30,9 @@
             class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 text-sm"
             >Contact Us</a
           >
-          <span class="text-gray-600 text-sm">Timing: 11:00 AM - 12:00 PM</span>
+          <span class="text-yellow-600 text-sm font-bold"
+            >Timing: 11:00 AM - 12:00 PM</span
+          >
         </div>
       </div>
     </header>
@@ -198,109 +200,101 @@
           </section>
           <section
             id="invoice"
-            class="hidden bg-white p-6"
+            class="hidden"
             style="
               font-family: Arial, Helvetica, sans-serif;
-              max-width: 900px;
+              max-width: 700px;
               margin: 0 auto;
               border: 1px solid #222;
+              background: #fff;
+              padding: 20px;
+              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             "
           >
-            <!-- Header -->
-            <div
-              style="
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 24px;
-              "
-            >
+            <!-- Header: Logo, Name, Tagline -->
+            <div style="margin-bottom: 5px">
               <img
                 id="printLogo"
                 src="Logo.png"
                 alt="Shop Logo"
-                style="height: 70px; width: 70px; object-fit: contain"
+                style="height: 100px; width: 100px; margin-right: 50%"
               />
-              <h2
-                style="
-                  font-size: 2rem;
-                  font-weight: bold;
-                  color: #d97706;
-                  text-align: center;
-                  flex-grow: 1;
-                "
-              >
-                Kashi Pizza Home
-              </h2>
-              <div style="text-align: right; font-size: 14px; max-width: 200px">
-                <em>The Taste You Love!</em>
+              <div>
+                <h2
+                  style="
+                    margin-left: 40%;
+                    font-size: 4rem;
+                    font-weight: bold;
+                    color: #d97706;
+                  "
+                >
+                  Kashi Pizza Home
+                </h2>
               </div>
             </div>
 
-            <!-- Invoice Info -->
+            <!-- Invoice Info: Number and Date side by side -->
             <table
               style="
                 width: 100%;
-                border-collapse: collapse;
                 margin-bottom: 12px;
                 font-size: 15px;
+                border-collapse: collapse;
               "
             >
-              <tbody>
-                <tr>
-                  <td
-                    style="
-                      border: 1px solid #222;
-                      padding: 8px;
-                      font-weight: bold;
-                      width: 25%;
-                    "
-                  >
-                    Invoice Number
-                  </td>
-                  <td style="border: 1px solid #222; padding: 8px; width: 25%">
-                    <span id="invoiceNumber"></span>
-                  </td>
-                  <td
-                    style="
-                      border: 1px solid #222;
-                      padding: 8px;
-                      font-weight: bold;
-                      width: 25%;
-                    "
-                  >
-                    Invoice Date
-                  </td>
-                  <td style="border: 1px solid #222; padding: 8px; width: 25%">
-                    <span id="invoiceDate"></span>
-                  </td>
-                </tr>
-                <tr>
-                  <td
-                    style="
-                      border: 1px solid #222;
-                      padding: 8px;
-                      font-weight: bold;
-                    "
-                  >
-                    Customer Name
-                  </td>
-                  <td
-                    colspan="3"
-                    style="
-                      border: 1px solid #222;
-                      padding: 8px;
-                      font-weight: bold;
-                      color: #e11d48;
-                    "
-                  >
-                    <span id="invoiceCustomerName">N/A</span>
-                  </td>
-                </tr>
-              </tbody>
+              <tr>
+                <td
+                  style="
+                    font-weight: bold;
+                    width: 25%;
+                    padding: 8px;
+                    border: 1px solid #222;
+                  "
+                >
+                  Invoice Number:
+                </td>
+                <td style="width: 25%; padding: 8px; border: 1px solid #222">
+                  <span id="invoiceNumber">INV-1750348713834</span>
+                </td>
+                <td
+                  style="
+                    font-weight: bold;
+                    width: 25%;
+                    padding: 8px;
+                    border: 1px solid #222;
+                  "
+                >
+                  Invoice Date:
+                </td>
+                <td style="width: 25%; padding: 8px; border: 1px solid #222">
+                  <span id="invoiceDate">6/19/2025</span>
+                </td>
+              </tr>
+              <tr>
+                <td
+                  style="
+                    font-weight: bold;
+                    padding: 8px;
+                    border: 1px solid #222;
+                  "
+                >
+                  Customer Name:
+                </td>
+                <td
+                  colspan="3"
+                  style="
+                    color: #e11d48;
+                    font-weight: bold;
+                    padding: 8px;
+                    border: 1px solid #222;
+                  "
+                >
+                  <span id="invoiceCustomerName">N/A</span>
+                </td>
+              </tr>
             </table>
 
-            <!-- Invoice Items -->
+            <!-- Items Table -->
             <table
               style="
                 width: 100%;
@@ -309,12 +303,12 @@
                 font-size: 15px;
               "
             >
-              <thead>
-                <tr style="background: #f5f5f5">
+              <thead style="background: #f5f5f5">
+                <tr>
                   <th
                     style="
-                      border: 1px solid #222;
                       padding: 8px;
+                      border: 1px solid #222;
                       text-align: left;
                     "
                   >
@@ -322,18 +316,8 @@
                   </th>
                   <th
                     style="
-                      border: 1px solid #222;
                       padding: 8px;
-                      text-align: center;
-                      width: 100px;
-                    "
-                  >
-                    Quantity
-                  </th>
-                  <th
-                    style="
                       border: 1px solid #222;
-                      padding: 8px;
                       text-align: right;
                     "
                   >
@@ -341,8 +325,17 @@
                   </th>
                   <th
                     style="
-                      border: 1px solid #222;
                       padding: 8px;
+                      border: 1px solid #222;
+                      text-align: right;
+                    "
+                  >
+                    Quantity
+                  </th>
+                  <th
+                    style="
+                      padding: 8px;
+                      border: 1px solid #222;
                       text-align: right;
                     "
                   >
@@ -351,15 +344,45 @@
                 </tr>
               </thead>
               <tbody id="invoiceItemsTableBody">
-                <!-- Dynamically injected items here -->
+                <!-- Example item row -->
+                <tr>
+                  <td style="padding: 8px; border: 1px solid #222">Pasta</td>
+                  <td
+                    style="
+                      padding: 8px;
+                      border: 1px solid #222;
+                      text-align: right;
+                    "
+                  >
+                    PKR 500
+                  </td>
+                  <td
+                    style="
+                      padding: 8px;
+                      border: 1px solid #222;
+                      text-align: right;
+                    "
+                  >
+                    1
+                  </td>
+                  <td
+                    style="
+                      padding: 8px;
+                      border: 1px solid #222;
+                      text-align: right;
+                    "
+                  >
+                    PKR 500
+                  </td>
+                </tr>
               </tbody>
               <tfoot>
                 <tr>
                   <td
                     colspan="3"
                     style="
-                      border: 1px solid #222;
                       padding: 8px;
+                      border: 1px solid #222;
                       text-align: right;
                       font-weight: bold;
                     "
@@ -369,24 +392,33 @@
                   <td
                     id="invoiceGrandTotal"
                     style="
-                      border: 1px solid #222;
                       padding: 8px;
+                      border: 1px solid #222;
                       text-align: right;
                       font-weight: bold;
                     "
-                  ></td>
+                  >
+                    PKR 500
+                  </td>
                 </tr>
               </tfoot>
             </table>
 
-            <!-- Footer -->
-            <div style="margin-top: 16px; font-size: 15px">
-              <div>
-                <strong>Shop Address:</strong> Awan Shareef Road, Dawood Plazza,
-                near Akhtar Public School, JalalPur Sobtain, Gujrat, Pakistan
+            <!-- Address and Footer -->
+            <div style="margin-top: 24px; font-size: 14px; color: #444">
+              <div style="margin-bottom: 12px; font-weight: bold">
+                Shop Address:
               </div>
-              <div><strong>Phone:</strong> +92304-0600910, +92313-6978075</div>
-              <div style="margin-top: 8px">Thank you for your Order!</div>
+              <div style="margin-bottom: 6px; font-weight: bold">
+                Awan Shareef Road, Dawood Plazza, near Akhtar Public School,
+                JalalPur Sobtain, Gujrat, Pakistan
+              </div>
+              <div style="margin-bottom: 12px; font-weight: bold">
+                Phone: +92304-0600910, +92313-6978075
+              </div>
+              <div style="font-weight: bold; margin-top: 12px; color: #d97706">
+                Thank you for your Order!
+              </div>
             </div>
           </section>
         </main>

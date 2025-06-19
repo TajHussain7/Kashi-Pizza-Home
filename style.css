@@ -7,6 +7,10 @@
   body * {
     visibility: hidden !important;
   }
+  @page {
+    size: A4 portrait !important;
+    margin: 12mm !important;
+  }
   #invoice,
   #invoice * {
     visibility: visible !important;

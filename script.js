@@ -696,16 +696,6 @@ function handleGenerateAndPrintInvoice() {
   });
   invoiceGrandTotalElement.textContent = `PKR ${formatPrice(grandTotal)}`;
 
-  // --- Ensure all invoice info is on one page, add tagline ---
-  let tagline = document.getElementById("invoiceTagline");
-  if (!tagline) {
-    tagline = document.createElement("p");
-    tagline.id = "invoiceTagline";
-    tagline.className = "text-center text-yellow-700 font-semibold mb-2";
-    tagline.textContent = "Adding Taste to your Life";
-    invoiceElement.insertBefore(tagline, invoiceElement.firstChild.nextSibling);
-  }
-
   // Show the invoice section and hide others for printing
   invoiceElement.classList.remove("hidden");
   document.getElementById("categoryManagementSection").classList.add("hidden");
