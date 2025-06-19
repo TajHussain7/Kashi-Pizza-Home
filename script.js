@@ -431,11 +431,11 @@ function loadAndDisplayManagedItems(selectedCat = null) {
     (item) => item.category === categoryToDisplay
   );
   // --- Pizza size options for dashboard (menu management) ---
-  // Fix: Show all pizza sizes for 'Regular Pizza' and 'Special Pizza' categories as well
+  // Fix: Show all pizza sizes for 'Regular Pizza', 'Special Pizza', and 'Pizzas' categories
   if (
     categoryToDisplay === "Regular Pizza" ||
-    categoryToDisplay === "Pizzas" ||
-    categoryToDisplay === "Special Pizza"
+    categoryToDisplay === "Special Pizza" ||
+    categoryToDisplay === "Pizzas"
   ) {
     const pizzaSizes = ["Small", "Medium", "Large", "Family"];
     const pizzaItems = items.filter(
@@ -469,37 +469,38 @@ function loadAndDisplayManagedItems(selectedCat = null) {
     return; // Prevent duplicate display
   }
   filteredItems.forEach((item) => {
-    if (
-      (item.category === "Pizzas" ||
-        item.category === "Regular Pizza" ||
-        item.category === "Special Pizza") &&
-      item.sizePrices
-    ) {
-      for (const size in item.sizePrices) {
-        const row = document.createElement("tr");
-        const displayName = `${item.name} (${size})`;
-        const displayPrice = item.sizePrices[size];
-        row.innerHTML = `
-          <td class="p-2 border text-sm font-medium">${item.category}</td>
-          <td class="p-2 border">${displayName}</td>
-          <td class="p-2 border">PKR ${formatPrice(displayPrice)}</td>
-          <td class="p-2 border">
-            <button class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600 mr-2" onclick="editItem(${
-              item.id
-            }, '${size}')">Update</button>
-            <button class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" onclick="deleteItem(${
-              item.id
-            }, '${size}')">Delete</button>
-          </td>
-        `;
-        managedItemsListBody.appendChild(row);
-      }
+    let displayName = item.name;
+    let displayPrice = item.price;
+    if (item.category === "Pizzas" && item.sizePrices) {
+      // Always show all 4 sizes in order
+      const pizzaSizes = ["Small", "Medium", "Large", "Family"];
+      pizzaSizes.forEach((size) => {
+        if (item.sizePrices[size]) {
+          const row = document.createElement("tr");
+          displayName = `${item.name} (${size})`;
+          displayPrice = item.sizePrices[size];
+          row.innerHTML = `
+            <td class="p-2 border text-sm font-medium">${item.category}</td>
+            <td class="p-2 border">${displayName}</td>
+            <td class="p-2 border">PKR ${formatPrice(displayPrice)}</td>
+            <td class="p-2 border">
+              <button class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600 mr-2" onclick="editItem(${
+                item.id
+              }, '${size}')">Update</button>
+              <button class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" onclick="deleteItem(${
+                item.id
+              }, '${size}')">Delete</button>
+            </td>
+          `;
+          managedItemsListBody.appendChild(row);
+        }
+      });
     } else {
       const row = document.createElement("tr");
       row.innerHTML = `
         <td class="p-2 border text-sm font-medium">${item.category}</td>
-        <td class="p-2 border">${item.name}</td>
-        <td class="p-2 border">PKR ${formatPrice(item.price)}</td>
+        <td class="p-2 border">${displayName}</td>
+        <td class="p-2 border">PKR ${formatPrice(displayPrice)}</td>
         <td class="p-2 border">
           <button class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600 mr-2" onclick="editItem(${
             item.id
@@ -527,15 +528,24 @@ function populateInvoiceItemSelect() {
       : items.filter((item) => item.category === selectedCategory);
 
   filteredItems.forEach((item) => {
-    if (item.category === "Pizzas" && item.sizePrices) {
-      for (const size in item.sizePrices) {
-        const option = document.createElement("option");
-        option.value = `${item.id}_${size}`;
-        option.textContent = `${item.name} (${size}) - PKR ${formatPrice(
-          item.sizePrices[size]
-        )}`;
-        invoiceItemSelect.appendChild(option);
-      }
+    // Show pizza size options for both Regular Pizza and Special Pizza
+    if (
+      (item.category === "Regular Pizza" ||
+        item.category === "Special Pizza" ||
+        item.category === "Pizzas") &&
+      item.sizePrices
+    ) {
+      const pizzaSizes = ["Small", "Medium", "Large", "Family"];
+      pizzaSizes.forEach((size) => {
+        if (item.sizePrices[size]) {
+          const option = document.createElement("option");
+          option.value = `${item.id}_${size}`;
+          option.textContent = `${item.name} (${size}) - PKR ${formatPrice(
+            item.sizePrices[size]
+          )}`;
+          invoiceItemSelect.appendChild(option);
+        }
+      });
     } else {
       const option = document.createElement("option");
       option.value = item.id;
@@ -636,38 +646,18 @@ function renderCurrentInvoiceItems() {
 
 window.removeItemFromInvoice = (id, sizeString = "") => {
   currentOrder = currentOrder.filter((item) => {
-    const isMatchingId = item.id === id;
-    if (!isMatchingId) return true; // Keep if ID doesn't match
-
-    // If sizeString is provided, item name must include it (e.g., "(Small)")
+    if (item.id !== id) return true;
     if (sizeString) {
-      return !item.name.includes(`(${sizeString})`);
-    }
-    // If no sizeString, it's a non-sized item or we remove all sizes of this ID (depends on desired logic)
-    // Current logic: if it's a sized item, sizeString should be passed. If not, it means non-sized.
-    return item.name.includes(" ("); // This would keep sized items if sizeString is empty. Let's adjust.
-  });
-
-  // Refined filter logic for removal
-  currentOrder = currentOrder.filter((item) => {
-    const baseName = item.name.replace(
-      /\s\((Small|Medium|Large|Family)\)$/,
-      ""
-    );
-    const itemSize =
-      item.name.match(/\((Small|Medium|Large|Family)\)$/)?.[1] || null;
-
-    if (item.id !== id) return true; // Not the item to remove
-
-    if (sizeString) {
-      // Trying to remove a sized item
-      return itemSize !== sizeString;
+      // Remove only if name ends with the sizeString (case-insensitive, trimmed)
+      return !item.name
+        .trim()
+        .toLowerCase()
+        .endsWith(sizeString.trim().toLowerCase() + ")");
     } else {
-      // Trying to remove a non-sized item
-      return itemSize !== null; // Keep if it's a sized item, remove if it's non-sized
+      // Remove if id matches (for all non-sized or any item)
+      return false;
     }
   });
-
   localStorage.setItem("currentOrder", JSON.stringify(currentOrder));
   renderCurrentInvoiceItems();
 };

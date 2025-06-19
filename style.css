@@ -108,3 +108,49 @@ input:focus {
   border-color: #d97706;
   box-shadow: 0 0 0 2px rgba(209, 119, 6, 0.2);
 }
+
+/* Invoice Generator Section Custom Sizing */
+#invoiceGeneratorView .flex {
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+#invoiceCategoryFilter,
+#invoiceItemSelect,
+#invoiceItemQuantity {
+  min-width: 180px;
+  max-width: 260px;
+  min-height: 48px;
+  font-size: 1.1rem;
+}
+#addItemToInvoiceBtn {
+  min-width: 140px;
+  min-height: 48px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+#addItemToInvoiceBtn:active,
+#addItemToInvoiceBtn:focus {
+  background: #059669;
+  outline: 2px solid #059669;
+}
+#itemPricePreview,
+.text-sm.text-gray-600.mt-2 {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 1.1rem;
+  color: #e11d48;
+  font-weight: 500;
+}
+@media (max-width: 640px) {
+  #invoiceCategoryFilter,
+  #invoiceItemSelect,
+  #invoiceItemQuantity,
+  #addItemToInvoiceBtn {
+    min-width: 100%;
+    max-width: 100%;
+    min-height: 44px;
+    font-size: 1rem;
+  }
+}
