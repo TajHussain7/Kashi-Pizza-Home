@@ -1,0 +1,110 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+  #invoice,
+  #invoice * {
+    visibility: visible !important;
+  }
+  #invoice {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    min-height: 100vh;
+    background: #fff;
+    z-index: 9999;
+    box-shadow: none;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  #invoice table {
+    width: 100% !important;
+    font-size: 1rem !important;
+    border-collapse: collapse !important;
+  }
+  #invoice th,
+  #invoice td {
+    border: 1px solid #333 !important;
+    padding: 8px !important;
+    text-align: left !important;
+  }
+  #invoice h2 {
+    margin-bottom: 0.5rem !important;
+    font-size: 2rem !important;
+  }
+  #invoice p,
+  #invoice span {
+    font-size: 1rem !important;
+  }
+  #invoice .text-center {
+    text-align: center !important;
+  }
+  #invoice .mb-2,
+  #invoice .mb-4 {
+    margin-bottom: 0.5rem !important;
+  }
+}
+.shop-logo {
+  height: 80px;
+  width: 80px;
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+}
+#printLogo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto 1rem auto;
+}
+
+/* Header and Footer Styles */
+header {
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0.5rem;
+  max-height: 80px;
+  overflow: hidden;
+}
+
+header img {
+  height: 80px;
+  width: 80px;
+}
+
+footer {
+  border-top: 1px solid #4a5568;
+}
+
+/* Custom Styles for Attractiveness */
+.bg-gradient-to-r {
+  transition: background-color 0.3s;
+}
+button:hover {
+  transform: translateY(-1px);
+  transition: transform 0.2s;
+}
+table {
+  background-color: #fff;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+.print-invoice {
+  display: none !important;
+}
+select,
+input {
+  border-color: #f59e0b;
+}
+select:focus,
+input:focus {
+  outline: none;
+  border-color: #d97706;
+  box-shadow: 0 0 0 2px rgba(209, 119, 6, 0.2);
+}
