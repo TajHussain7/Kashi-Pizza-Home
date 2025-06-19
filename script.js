@@ -714,6 +714,41 @@ function handleGenerateAndPrintInvoice() {
   // Print
   window.print();
 
+  // --- Save invoice as TXT file ---
+  let invoiceText = "";
+  invoiceText += `Invoice Number: INV-${Date.now()}\n`;
+  invoiceText += `Date: ${new Date().toLocaleDateString()}\n`;
+  invoiceText += `Customer Name: ${customerName || "N/A"}\n`;
+  invoiceText += `------------------------------------------\n`;
+  invoiceText += `Item Name                Qty   Price   Subtotal\n`;
+  invoiceText += `------------------------------------------\n`;
+  Object.values(groupedItems).forEach((item) => {
+    const itemTotal = item.price * item.quantity;
+    invoiceText += `${item.name.padEnd(24)} ${String(item.quantity).padEnd(
+      5
+    )} PKR ${formatPrice(item.price).padEnd(7)} PKR ${formatPrice(
+      itemTotal
+    )}\n`;
+  });
+  invoiceText += `------------------------------------------\n`;
+  invoiceText += `Grand Total: PKR ${formatPrice(grandTotal)}\n`;
+  invoiceText += `------------------------------------------\n`;
+  invoiceText += `Adding Taste to your Life\n\n`;
+
+  // Retrieve existing log or start new
+  let invoiceLog = localStorage.getItem("invoiceLog") || "";
+  invoiceLog += invoiceText;
+  localStorage.setItem("invoiceLog", invoiceLog);
+
+  // Download the full log as a single file
+  const blob = new Blob([invoiceLog], { type: "text/plain" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `All_Invoices.txt`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
   // After print, hide invoice and show main UI again
   invoiceElement.classList.add("hidden");
   document
