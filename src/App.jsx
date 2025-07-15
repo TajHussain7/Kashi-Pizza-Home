@@ -354,18 +354,21 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-red-50">
+    <div
+      className="min-h-screen bg-gradient-to-br from-yellow-50 to-red-50"
+      style={{ width: "80%", margin: "0 auto", maxWidth: "100vw" }}
+    >
       {/* Header */}
-      <header className="bg-white shadow-lg p-2">
+      <header className="bg-white shadow-lg p-6">
         <div className="container mx-auto flex justify-between items-center">
           <div>
             <img
               src="/Logo.png"
               alt="Kashi Pizza Home Logo"
-              className="h-20 w-20 object-contain"
+              className="h-24 w-24 object-contain"
             />
           </div>
-          <h1 className="text-4xl font-bold text-yellow-600">
+          <h1 className="text-5xl font-bold text-yellow-600">
             Kashi Pizza Home
           </h1>
           <div className="flex items-center space-x-2">
@@ -373,11 +376,11 @@ export default function App() {
               href="https://wa.me/923040600910"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 text-sm"
+              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 text-base"
             >
               Contact Us
             </a>
-            <span className="text-yellow-600 text-sm font-bold">
+            <span className="text-yellow-600 text-base font-bold">
               Timing: 11:00 AM - 12:00 PM
             </span>
           </div>
@@ -385,10 +388,10 @@ export default function App() {
       </header>
 
       {/* Navigation */}
-      <div className="flex justify-center space-x-4 my-4">
+      <div className="flex justify-center space-x-6 my-6">
         <button
           onClick={() => setCurrentView("itemManagement")}
-          className={`px-4 py-2 rounded transition-colors ${
+          className={`px-6 py-3 rounded-lg text-lg font-medium transition-colors ${
             currentView === "itemManagement"
               ? "bg-blue-600 text-white"
               : "bg-blue-500 text-white hover:bg-blue-600"
@@ -398,7 +401,7 @@ export default function App() {
         </button>
         <button
           onClick={() => setCurrentView("invoiceGenerator")}
-          className={`px-4 py-2 rounded transition-colors ${
+          className={`px-6 py-3 rounded-lg text-lg font-medium transition-colors ${
             currentView === "invoiceGenerator"
               ? "bg-green-600 text-white"
               : "bg-green-500 text-white hover:bg-green-600"
@@ -408,20 +411,20 @@ export default function App() {
         </button>
         <button
           onClick={() => setShowPDFManager(true)}
-          className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition-colors"
+          className="bg-purple-500 text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-purple-600 transition-colors"
         >
           📄 PDF Storage
         </button>
         <button
           onClick={() => setShowInvoiceHistory(true)}
-          className="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 transition-colors"
+          className="bg-indigo-500 text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-indigo-600 transition-colors"
         >
           Invoice History
         </button>
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto p-4 max-w-6xl">
+      <div className="container mx-auto p-6 max-w-full min-h-[60vh]">
         {currentView === "itemManagement" ? (
           <ItemManagement
             items={items}
