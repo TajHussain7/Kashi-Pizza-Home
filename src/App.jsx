@@ -18,11 +18,11 @@ export default function App() {
   const [showInvoiceHistory, setShowInvoiceHistory] = useState(false);
   const [invoiceData, setInvoiceData] = useState(null);
 
-  // Force window to 90% size on load and resize
+  // Force window to 75% size on load and resize
   useEffect(() => {
     const forceWindowSize = () => {
-      const targetWidth = Math.floor(window.screen.availWidth * 0.9);
-      const targetHeight = Math.floor(window.screen.availHeight * 0.9);
+      const targetWidth = Math.floor(window.screen.availWidth * 0.75);
+      const targetHeight = Math.floor(window.screen.availHeight * 0.75);
 
       // Only resize if window size is significantly different from target
       if (
