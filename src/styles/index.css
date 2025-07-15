@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global styles */
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+/* A4 Invoice Layout */
+.a4-size {
+  width: 210mm;
+  height: 297mm;
+  margin: auto;
+}
+
+.a4-invoice-container {
+  max-width: 210mm;
+  margin: 0 auto;
+}
+
+/* Print styles for A4 Invoice */
+@media print {
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .a4-invoice-container,
+  .a4-invoice-container * {
+    visibility: visible !important;
+  }
+
+  .a4-size {
+    width: 210mm;
+    height: 297mm;
+    margin: auto;
+    padding: 15mm !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: white !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+}
+
+/* Custom component styles */
+.shop-logo {
+  height: 80px;
+  width: 80px;
+  object-fit: contain;
+}
+
+/* Button hover effects */
+button:hover {
+  transform: translateY(-1px);
+  transition: transform 0.2s;
+}
+
+/* Form focus styles */
+input:focus,
+select:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgb(217 119 6 / 0.2);
+  border-color: rgb(217 119 6);
+}
