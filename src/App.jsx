@@ -18,6 +18,43 @@ export default function App() {
   const [showInvoiceHistory, setShowInvoiceHistory] = useState(false);
   const [invoiceData, setInvoiceData] = useState(null);
 
+  // Force window to 90% size on load and resize
+  useEffect(() => {
+    const forceWindowSize = () => {
+      const targetWidth = Math.floor(window.screen.availWidth * 0.9);
+      const targetHeight = Math.floor(window.screen.availHeight * 0.9);
+
+      // Only resize if window size is significantly different from target
+      if (
+        Math.abs(window.outerWidth - targetWidth) > 50 ||
+        Math.abs(window.outerHeight - targetHeight) > 50
+      ) {
+        window.resizeTo(targetWidth, targetHeight);
+
+        // Center the window
+        const left = (window.screen.availWidth - targetWidth) / 2;
+        const top = (window.screen.availHeight - targetHeight) / 2;
+        window.moveTo(left, top);
+      }
+    };
+
+    // Apply on load
+    forceWindowSize();
+
+    // Apply on resize with debounce
+    let resizeTimeout;
+    const handleResize = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(forceWindowSize, 500);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      clearTimeout(resizeTimeout);
+    };
+  }, []);
+
   // Complete menu based on KPH menu images
   const defaultCategories = [
     "Burgers",
@@ -356,19 +393,19 @@ export default function App() {
   return (
     <div
       className="min-h-screen bg-gradient-to-br from-yellow-50 to-red-50"
-      style={{ width: "80%", margin: "0 auto", maxWidth: "100vw" }}
+      style={{ width: "100%", height: "100vh", margin: "0", padding: "0" }}
     >
       {/* Header */}
-      <header className="bg-white shadow-lg p-6">
-        <div className="container mx-auto flex justify-between items-center">
+      <header className="bg-white shadow-lg p-8">
+        <div className="w-full flex justify-between items-center px-6">
           <div>
             <img
               src="/Logo.png"
               alt="Kashi Pizza Home Logo"
-              className="h-24 w-24 object-contain"
+              className="h-28 w-28 object-contain"
             />
           </div>
-          <h1 className="text-5xl font-bold text-yellow-600">
+          <h1 className="text-6xl font-bold text-yellow-600">
             Kashi Pizza Home
           </h1>
           <div className="flex items-center space-x-2">
@@ -376,11 +413,11 @@ export default function App() {
               href="https://wa.me/923040600910"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 text-base"
+              className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 text-lg font-medium"
             >
               Contact Us
             </a>
-            <span className="text-yellow-600 text-base font-bold">
+            <span className="text-yellow-600 text-lg font-bold">
               Timing: 11:00 AM - 12:00 PM
             </span>
           </div>
@@ -388,10 +425,10 @@ export default function App() {
       </header>
 
       {/* Navigation */}
-      <div className="flex justify-center space-x-6 my-6">
+      <div className="flex justify-center space-x-8 my-8">
         <button
           onClick={() => setCurrentView("itemManagement")}
-          className={`px-6 py-3 rounded-lg text-lg font-medium transition-colors ${
+          className={`px-8 py-4 rounded-xl text-xl font-semibold transition-colors shadow-lg ${
             currentView === "itemManagement"
               ? "bg-blue-600 text-white"
               : "bg-blue-500 text-white hover:bg-blue-600"
@@ -401,7 +438,7 @@ export default function App() {
         </button>
         <button
           onClick={() => setCurrentView("invoiceGenerator")}
-          className={`px-6 py-3 rounded-lg text-lg font-medium transition-colors ${
+          className={`px-8 py-4 rounded-xl text-xl font-semibold transition-colors shadow-lg ${
             currentView === "invoiceGenerator"
               ? "bg-green-600 text-white"
               : "bg-green-500 text-white hover:bg-green-600"
@@ -411,20 +448,20 @@ export default function App() {
         </button>
         <button
           onClick={() => setShowPDFManager(true)}
-          className="bg-purple-500 text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-purple-600 transition-colors"
+          className="bg-purple-500 text-white px-8 py-4 rounded-xl text-xl font-semibold hover:bg-purple-600 transition-colors shadow-lg"
         >
           📄 PDF Storage
         </button>
         <button
           onClick={() => setShowInvoiceHistory(true)}
-          className="bg-indigo-500 text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-indigo-600 transition-colors"
+          className="bg-indigo-500 text-white px-8 py-4 rounded-xl text-xl font-semibold hover:bg-indigo-600 transition-colors shadow-lg"
         >
           Invoice History
         </button>
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto p-6 max-w-full min-h-[60vh]">
+      <div className="w-full p-8 min-h-[65vh]">
         {currentView === "itemManagement" ? (
           <ItemManagement
             items={items}
