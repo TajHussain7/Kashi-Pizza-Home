@@ -396,16 +396,16 @@ export default function App() {
       style={{ width: "100%", height: "100vh", margin: "0", padding: "0" }}
     >
       {/* Header */}
-      <header className="bg-white shadow-lg p-8">
-        <div className="w-full flex justify-between items-center px-6">
+      <header className="bg-white shadow-lg p-2">
+        <div className="w-full flex justify-between items-center px-5">
           <div>
             <img
               src="/Logo.png"
               alt="Kashi Pizza Home Logo"
-              className="h-28 w-28 object-contain"
+              className="h-36 w-36 object-contain drop-shadow-lg"
             />
           </div>
-          <h1 className="text-6xl font-bold text-yellow-600">
+          <h1 className="text-5xl font-bold text-yellow-600">
             Kashi Pizza Home
           </h1>
           <div className="flex items-center space-x-2">
