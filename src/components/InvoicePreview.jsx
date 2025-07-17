@@ -11,7 +11,6 @@ export default function InvoicePreview({ invoiceData, onPrint, onBack }) {
   const { invoiceNumber, invoiceDate, customerName, items, total } =
     invoiceData;
 
-  // Group items with the same name
   const groupedItems = {};
   items.forEach((item) => {
     if (!groupedItems[item.name]) {
@@ -25,7 +24,6 @@ export default function InvoicePreview({ invoiceData, onPrint, onBack }) {
     return Number.isInteger(price) ? price.toString() : price.toFixed(2);
   };
 
-  // Check if PDF exists when component mounts
   React.useEffect(() => {
     const checkPDFStatus = async () => {
       const existingPDF = await checkExistingPDF(invoiceNumber);
@@ -51,7 +49,6 @@ export default function InvoicePreview({ invoiceData, onPrint, onBack }) {
       console.error("Error generating PDF:", error);
       setPdfStatus({ loading: false, exists: false });
 
-      // Fallback to print
       alert("PDF generation failed. Opening print dialog instead.");
       window.print();
     }
@@ -67,7 +64,6 @@ export default function InvoicePreview({ invoiceData, onPrint, onBack }) {
       }
     } catch (error) {
       console.error("Error downloading existing PDF:", error);
-      // Try generating new PDF
       await handleGeneratePDF(true);
     }
 

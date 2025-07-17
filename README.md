@@ -58,8 +58,7 @@ Fast Food Dashboard/
 │   │   └── index.css               # Global styles and Tailwind
 │   ├── utils/
 │   │   ├── pdfUtils.js             # PDF generation functions
-│   │   ├── localStorageUtils.js    # Data persistence utilities
-│   │   └── mongoUtils.js           # Database utilities (future use)
+│   │   └── localStorageUtils.js    # Data persistence utilities
 │   ├── App.jsx                     # Main application component
 │   └── index.js                    # Application entry point
 ├── public/

@@ -16,7 +16,6 @@ export default function ItemManagement({
   const [searchTerm, setSearchTerm] = useState("");
   const [newCategoryName, setNewCategoryName] = useState("");
 
-  // For items with size variants (pizzas)
   const [hasSizes, setHasSizes] = useState(false);
   const [sizePrices, setSizePrices] = useState({
     Small: "",
@@ -80,7 +79,6 @@ export default function ItemManagement({
       setCategories(updatedCategories);
       localStorage.setItem("categories", JSON.stringify(updatedCategories));
 
-      // Update items that were in the deleted category
       const updatedItems = items.map((item) =>
         item.category === categoryToDelete
           ? { ...item, category: "Uncategorized" }
@@ -118,7 +116,6 @@ export default function ItemManagement({
     };
 
     if (hasSizes) {
-      // Validate that at least one size has a price
       const validSizes = Object.entries(sizePrices).filter(
         ([size, price]) => price && !isNaN(price)
       );
@@ -131,7 +128,7 @@ export default function ItemManagement({
       validSizes.forEach(([size, price]) => {
         newItem.sizePrices[size] = parseFloat(price);
       });
-      newItem.price = validSizes[0][1]; // Set default price to first valid size
+      newItem.price = validSizes[0][1];
     } else {
       if (isNaN(itemPrice) || itemPrice <= 0) {
         alert("Please enter a valid price.");

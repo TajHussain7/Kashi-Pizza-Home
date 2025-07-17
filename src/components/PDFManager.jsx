@@ -64,10 +64,10 @@ export default function PDFManager({ onClose }) {
   };
 
   const handleCleanup = async () => {
-    if (confirm("This will keep only the 10 most recent PDFs. Continue?")) {
+    if (confirm("This will delete ALL stored PDFs. Continue?")) {
       try {
-        const deletedCount = await cleanupOldPDFs(10);
-        alert(`Cleaned up ${deletedCount} old PDFs`);
+        const deletedCount = await cleanupOldPDFs(0);
+        alert(`Deleted ${deletedCount} PDFs`);
         await loadPDFData(); // Refresh the list
       } catch (error) {
         console.error("Error cleaning up PDFs:", error);
@@ -207,19 +207,6 @@ export default function PDFManager({ onClose }) {
                 )}
               </tbody>
             </table>
-          </div>
-
-          {/* Info Section */}
-          <div className="mt-6 p-4 bg-gray-100 rounded-lg text-sm">
-            <h4 className="font-semibold mb-2">Storage Information:</h4>
-            <ul className="space-y-1 text-gray-600">
-              <li>• PDFs are stored in your browser for quick access</li>
-              <li>
-                • IndexedDB provides better storage capacity than localStorage
-              </li>
-              <li>• Old PDFs are automatically cleaned up to save space</li>
-              <li>• Existing PDFs are reused instead of regenerating them</li>
-            </ul>
           </div>
         </div>
       </div>

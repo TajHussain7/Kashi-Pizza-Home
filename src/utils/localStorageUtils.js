@@ -1,7 +1,6 @@
 // Pure localStorage utility for Fast Food Dashboard
 // No database connections - everything stored locally
 
-// localStorage keys
 const STORAGE_KEYS = {
   ITEMS: "items",
   CATEGORIES: "categories",
@@ -12,7 +11,6 @@ const STORAGE_KEYS = {
 
 // Real-time localStorage operations
 export class LocalStorageManager {
-  // Items management
   static getItems() {
     try {
       const items = localStorage.getItem(STORAGE_KEYS.ITEMS);
@@ -33,7 +31,6 @@ export class LocalStorageManager {
     }
   }
 
-  // Categories management
   static getCategories() {
     try {
       const categories = localStorage.getItem(STORAGE_KEYS.CATEGORIES);
@@ -54,7 +51,6 @@ export class LocalStorageManager {
     }
   }
 
-  // Current order management
   static getCurrentOrder() {
     try {
       const order = localStorage.getItem(STORAGE_KEYS.CURRENT_ORDER);
@@ -75,7 +71,6 @@ export class LocalStorageManager {
     }
   }
 
-  // Invoice management
   static getInvoices() {
     try {
       const invoices = localStorage.getItem(STORAGE_KEYS.INVOICES);
@@ -96,7 +91,7 @@ export class LocalStorageManager {
         source: "localStorage",
       };
 
-      existingInvoices.unshift(newInvoice); // Add to beginning
+      existingInvoices.unshift(newInvoice);
       localStorage.setItem(
         STORAGE_KEYS.INVOICES,
         JSON.stringify(existingInvoices)
@@ -123,7 +118,6 @@ export class LocalStorageManager {
     }
   }
 
-  // Get invoice history with pagination
   static getInvoiceHistory(options = {}) {
     try {
       const { page = 1, limit = 20 } = options;
@@ -152,7 +146,6 @@ export class LocalStorageManager {
     }
   }
 
-  // Clear all data
   static clearAllData() {
     try {
       Object.values(STORAGE_KEYS).forEach((key) => {
@@ -165,7 +158,6 @@ export class LocalStorageManager {
     }
   }
 
-  // Initialize with default data if empty
   static initializeWithDefaults(defaultItems = [], defaultCategories = []) {
     try {
       const existingItems = this.getItems();
@@ -186,7 +178,6 @@ export class LocalStorageManager {
     }
   }
 
-  // Get storage usage stats
   static getStorageStats() {
     try {
       const stats = {};
@@ -206,7 +197,6 @@ export class LocalStorageManager {
   }
 }
 
-// Legacy compatibility functions (for existing code)
 export const saveInvoiceToMongoDB = (invoiceData) => {
   return LocalStorageManager.saveInvoice(invoiceData);
 };
@@ -215,5 +205,4 @@ export const getInvoiceHistory = (options) => {
   return LocalStorageManager.getInvoiceHistory(options);
 };
 
-// Export default as LocalStorageManager
 export default LocalStorageManager;

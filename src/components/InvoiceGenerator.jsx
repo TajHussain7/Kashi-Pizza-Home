@@ -93,7 +93,6 @@ export default function InvoiceGenerator({
         setCurrentOrder([...currentOrder, orderItem]);
       }
 
-      // Reset form
       setQuantity(1);
       setSelectedItem("");
       setItemPricePreview("");
@@ -104,10 +103,8 @@ export default function InvoiceGenerator({
     const updatedOrder = currentOrder.filter((item) => {
       if (item.id !== itemId) return true;
       if (itemName.includes("(") && itemName.includes(")")) {
-        // For sized items, match the exact name
         return item.name !== itemName;
       } else {
-        // For regular items, just check if it's not the same ID
         return false;
       }
     });

@@ -99,7 +99,6 @@ const storePDFInLocalStorage = (invoiceData, pdfDataUrl) => {
       size: pdfDataUrl.length,
     };
 
-    // Keep only last 10 PDFs to avoid localStorage quota issues
     const sortedPDFs = Object.values(pdfStorage).sort(
       (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
     );
@@ -122,10 +121,8 @@ const storePDFInLocalStorage = (invoiceData, pdfDataUrl) => {
   }
 };
 
-// Check if PDF already exists
 export const checkExistingPDF = async (invoiceNumber) => {
   try {
-    // Try IndexedDB first
     const indexedDBResult = await retrievePDFFromIndexedDB(invoiceNumber);
     if (indexedDBResult) {
       return {
@@ -135,7 +132,6 @@ export const checkExistingPDF = async (invoiceNumber) => {
       };
     }
 
-    // Fallback to localStorage
     const localStoragePDFs = JSON.parse(
       localStorage.getItem("invoicePDFs") || "{}"
     );
@@ -193,7 +189,6 @@ export const generatePDFWithHtml2PDF = async (
   const filename = `invoice_${invoiceData.invoiceNumber}.pdf`;
 
   try {
-    // Check if PDF already exists and not forcing regeneration
     if (!forceRegenerate) {
       const existingPDF = await checkExistingPDF(invoiceData.invoiceNumber);
       if (existingPDF.exists) {
@@ -209,30 +204,76 @@ export const generatePDFWithHtml2PDF = async (
       throw new Error("Element not found");
     }
 
+    const tempFooter = document.createElement("div");
+    tempFooter.id = "temp-pdf-footer-professional";
+    tempFooter.style.cssText = `
+      margin-top: 30px;
+      padding: 15px 0;
+      text-align: center;
+      font-size: 11px;
+      color: #666;
+      border-top: 2px solid #ddd;
+      page-break-inside: avoid;
+      font-family: Arial, sans-serif;
+    `;
+    tempFooter.innerHTML = `
+      <div style="font-weight: bold;">
+        Developed by: Tajamal Hussain | Contact: +92 343 8002540
+      </div>
+    `;
+    invoiceElement.appendChild(tempFooter);
+
     const opt = {
-      margin: 0.5,
+      margin: [0.3, 0.25, 0.3, 0.25],
       filename: filename,
-      image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
+      image: {
+        type: "jpeg",
+        quality: 0.98,
+      },
+      html2canvas: {
+        scale: 2.2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: "#ffffff",
+        logging: false,
+        scrollX: 0,
+        scrollY: 0,
+        width: invoiceElement.scrollWidth,
+        height: invoiceElement.scrollHeight,
+      },
+      jsPDF: {
+        unit: "in",
+        format: "a4",
+        orientation: "portrait",
+        compress: true,
+        putOnlyUsedFonts: true,
+      },
+      pagebreak: {
+        mode: ["avoid-all", "css", "legacy"],
+        before: ".page-break-before",
+        after: ".page-break-after",
+      },
     };
 
-    // Generate PDF and get the blob
     const pdfResult = await html2pdf()
       .set(opt)
       .from(invoiceElement)
       .outputPdf("blob");
 
-    // Store the PDF for future use
+    const footerToRemove = document.getElementById(
+      "temp-pdf-footer-professional"
+    );
+    if (footerToRemove) {
+      footerToRemove.remove();
+    }
+
     const storedInIndexedDB = await storePDFInIndexedDB(invoiceData, pdfResult);
 
     if (!storedInIndexedDB) {
-      // Fallback to localStorage with data URL
       const pdfDataUrl = URL.createObjectURL(pdfResult);
       storePDFInLocalStorage(invoiceData, pdfDataUrl);
     }
 
-    // Download the PDF
     saveAs(pdfResult, filename);
 
     return { success: true, reused: false };
@@ -250,7 +291,6 @@ export const handleGeneratePDF = async (
   const filename = `invoice_${invoiceData.invoiceNumber}.pdf`;
 
   try {
-    // Check if PDF already exists
     if (!forceRegenerate) {
       const existingPDF = await checkExistingPDF(invoiceData.invoiceNumber);
       if (existingPDF.exists) {
@@ -259,29 +299,78 @@ export const handleGeneratePDF = async (
     }
 
     const invoiceElement = document.getElementById("invoice-content");
+    if (!invoiceElement) {
+      throw new Error("Invoice content element not found");
+    }
 
     const opt = {
-      margin: 0.5,
+      margin: [0.3, 0.25, 0.3, 0.25],
       filename: filename,
-      image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
+      image: {
+        type: "jpeg",
+        quality: 0.98,
+      },
+      html2canvas: {
+        scale: 2.2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: "#ffffff",
+        logging: false,
+        scrollX: 0,
+        scrollY: 0,
+        width: invoiceElement.scrollWidth,
+        height: invoiceElement.scrollHeight,
+      },
+      jsPDF: {
+        unit: "in",
+        format: "a4",
+        orientation: "portrait",
+        compress: true,
+        putOnlyUsedFonts: true,
+      },
+      pagebreak: {
+        mode: ["avoid-all", "css", "legacy"],
+        before: ".page-break-before",
+        after: ".page-break-after",
+      },
     };
 
-    // Generate and store PDF
+    const footer = document.createElement("div");
+    footer.style.cssText = `
+      margin-top: 30px;
+      padding: 15px 0;
+      text-align: center;
+      font-size: 11px;
+      color: #666;
+      border-top: 2px solid #ddd;
+      page-break-inside: avoid;
+      font-family: Arial, sans-serif;
+    `;
+    footer.innerHTML = `
+      <div style="font-weight: bold;">
+        Developed by: Tajamal Hussain | Contact: +92 343 8002540
+      </div>
+    `;
+    footer.id = "temp-pdf-footer";
+
+    invoiceElement.appendChild(footer);
+
     const pdfResult = await html2pdf()
       .set(opt)
       .from(invoiceElement)
       .outputPdf("blob");
 
-    // Store for future use
+    const tempFooter = document.getElementById("temp-pdf-footer");
+    if (tempFooter) {
+      tempFooter.remove();
+    }
+
     const storedInIndexedDB = await storePDFInIndexedDB(invoiceData, pdfResult);
     if (!storedInIndexedDB) {
       const pdfDataUrl = URL.createObjectURL(pdfResult);
       storePDFInLocalStorage(invoiceData, pdfDataUrl);
     }
 
-    // Download
     saveAs(pdfResult, filename);
     return true;
   } catch (error) {
@@ -299,7 +388,6 @@ export const generatePDF = async (
   const filename = `invoice_${invoiceData.invoiceNumber}.pdf`;
 
   try {
-    // Check existing PDF first
     if (!forceRegenerate) {
       const existingPDF = await checkExistingPDF(invoiceData.invoiceNumber);
       if (existingPDF.exists) {
@@ -312,41 +400,111 @@ export const generatePDF = async (
       throw new Error("Element not found");
     }
 
+    const footer = document.createElement("div");
+    footer.style.cssText = `
+      margin-top: 30px;
+      padding: 15px 0;
+      text-align: center;
+      font-size: 11px;
+      color: #666;
+      border-top: 2px solid #ddd;
+      page-break-inside: avoid;
+      font-family: Arial, sans-serif;
+    `;
+    footer.innerHTML = `
+      <div style="font-weight: bold;">
+        Developed by: Tajamal Hussain | Contact: +92 343 8002540
+      </div>
+    `;
+    footer.id = "temp-pdf-footer-canvas";
+
+    element.appendChild(footer);
+
     const canvas = await html2canvas(element, {
-      scale: 2,
+      scale: 2.2,
       useCORS: true,
       allowTaint: true,
       backgroundColor: "#ffffff",
+      logging: false,
+      scrollX: 0,
+      scrollY: 0,
+      width: element.scrollWidth,
+      height: element.scrollHeight,
     });
 
-    const imgData = canvas.toDataURL("image/png");
+    const tempFooter = document.getElementById("temp-pdf-footer-canvas");
+    if (tempFooter) {
+      tempFooter.remove();
+    }
+
+    const imgData = canvas.toDataURL("image/jpeg", 0.98);
     const pdf = new jsPDF({
       orientation: "portrait",
       unit: "mm",
       format: "a4",
+      compress: true,
+      putOnlyUsedFonts: true,
     });
 
-    const imgWidth = 210; // A4 width in mm
-    const pageHeight = 295; // A4 height in mm
+    const pdfWidth = 210;
+    const pdfHeight = 297;
+    const margin = 8;
+    const contentWidth = pdfWidth - 2 * margin;
+    const contentHeight = pdfHeight - 2 * margin;
+
+    const imgWidth = contentWidth;
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    let heightLeft = imgHeight;
 
-    let position = 0;
+    if (imgHeight <= contentHeight) {
+      pdf.addImage(imgData, "JPEG", margin, margin, imgWidth, imgHeight);
+    } else {
+      let yOffset = 0;
+      let remainingHeight = imgHeight;
+      let pageNumber = 1;
 
-    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
+      while (remainingHeight > 0) {
+        if (pageNumber > 1) {
+          pdf.addPage();
+        }
 
-    while (heightLeft >= 0) {
-      position = heightLeft - imgHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
+        const currentPageHeight = Math.min(contentHeight, remainingHeight);
+
+        const pageCanvas = document.createElement("canvas");
+        const pageCtx = pageCanvas.getContext("2d");
+
+        pageCanvas.width = canvas.width;
+        pageCanvas.height = (currentPageHeight * canvas.width) / imgWidth;
+
+        pageCtx.drawImage(
+          canvas,
+          0,
+          (yOffset * canvas.width) / imgWidth,
+          canvas.width,
+          pageCanvas.height,
+          0,
+          0,
+          canvas.width,
+          pageCanvas.height
+        );
+
+        const pageImgData = pageCanvas.toDataURL("image/jpeg", 0.98);
+        pdf.addImage(
+          pageImgData,
+          "JPEG",
+          margin,
+          margin,
+          imgWidth,
+          currentPageHeight
+        );
+
+        remainingHeight -= contentHeight;
+        yOffset += contentHeight;
+        pageNumber++;
+      }
     }
 
-    // Convert to blob and store
     const pdfBlob = pdf.output("blob");
 
-    // Store for future use
     const storedInIndexedDB = await storePDFInIndexedDB(invoiceData, pdfBlob);
     if (!storedInIndexedDB) {
       const pdfDataUrl = URL.createObjectURL(pdfBlob);
@@ -370,57 +528,229 @@ export const generatePDFWithPDFLib = async (
     const { invoiceNumber, invoiceDate, customerName, items, total } =
       invoiceData;
 
-    // Create a new PDF document
     const pdfDoc = await PDFDocument.create();
-    const page = pdfDoc.addPage([595.28, 841.89]); // A4 size in points
 
-    const { width, height } = page.getSize();
-    const fontSize = 12;
-    const headerFontSize = 16;
+    const pageWidth = 595.28;
+    const pageHeight = 841.89;
 
-    // Add content to PDF
+    let page = pdfDoc.addPage([pageWidth, pageHeight]);
+    let { width, height } = page.getSize();
+
+    const fontSize = 11;
+    const headerFontSize = 18;
+    const subHeaderFontSize = 14;
+    const footerFontSize = 9;
+
+    const margin = 50;
+    const contentWidth = width - 2 * margin;
+
+    let yPosition = height - margin;
+
     page.drawText("KASHI PIZZA HOME", {
-      x: 50,
-      y: height - 50,
+      x: margin,
+      y: yPosition,
       size: headerFontSize,
       color: rgb(0.8, 0.6, 0),
     });
 
-    // Add items and details
-    let yPosition = height - 100;
-    page.drawText(`Invoice: ${invoiceNumber}`, {
-      x: 50,
+    yPosition -= 30;
+
+    page.drawText("INVOICE", {
+      x: margin,
       y: yPosition,
-      size: fontSize,
+      size: subHeaderFontSize,
+      color: rgb(0, 0, 0),
     });
+
+    yPosition -= 25;
+
+    page.drawLine({
+      start: { x: margin, y: yPosition },
+      end: { x: width - margin, y: yPosition },
+      thickness: 1,
+      color: rgb(0.5, 0.5, 0.5),
+    });
+
     yPosition -= 20;
-    page.drawText(`Date: ${invoiceDate}`, {
-      x: 50,
-      y: yPosition,
-      size: fontSize,
+
+    const invoiceInfo = [
+      `Invoice Number: ${invoiceNumber}`,
+      `Date: ${invoiceDate}`,
+      `Customer: ${customerName || "N/A"}`,
+    ];
+
+    invoiceInfo.forEach((info) => {
+      page.drawText(info, {
+        x: margin,
+        y: yPosition,
+        size: fontSize,
+        color: rgb(0, 0, 0),
+      });
+      yPosition -= 18;
     });
+
+    yPosition -= 10;
+
+    page.drawText("Items:", {
+      x: margin,
+      y: yPosition,
+      size: subHeaderFontSize,
+      color: rgb(0, 0, 0),
+    });
+
+    yPosition -= 25;
+
+    page.drawLine({
+      start: { x: margin, y: yPosition },
+      end: { x: width - margin, y: yPosition },
+      thickness: 1,
+      color: rgb(0.5, 0.5, 0.5),
+    });
+
     yPosition -= 20;
-    page.drawText(`Customer: ${customerName}`, {
-      x: 50,
-      y: yPosition,
-      size: fontSize,
+
+    const groupedItems = {};
+    items.forEach((item) => {
+      if (!groupedItems[item.name]) {
+        groupedItems[item.name] = { ...item };
+      } else {
+        groupedItems[item.name].quantity += item.quantity;
+      }
     });
+
+    const itemsArray = Object.values(groupedItems);
+    let itemsOnCurrentPage = 0;
+    const maxItemsPerPage = 20;
+
+    itemsArray.forEach((item, index) => {
+      if (yPosition < 150 || itemsOnCurrentPage >= maxItemsPerPage) {
+        page = pdfDoc.addPage([pageWidth, pageHeight]);
+        yPosition = height - margin;
+        itemsOnCurrentPage = 0;
+
+        page.drawText("KASHI PIZZA HOME - Invoice Continued", {
+          x: margin,
+          y: yPosition,
+          size: fontSize,
+          color: rgb(0.8, 0.6, 0),
+        });
+        yPosition -= 40;
+      }
+
+      const itemText = `${item.name}`;
+      const qtyText = `Qty: ${item.quantity}`;
+      const priceText = `@ PKR ${item.price}`;
+      const totalText = `PKR ${(item.price * item.quantity).toFixed(2)}`;
+
+      page.drawText(itemText, {
+        x: margin,
+        y: yPosition,
+        size: fontSize,
+        color: rgb(0, 0, 0),
+      });
+
+      page.drawText(qtyText, {
+        x: margin + 200,
+        y: yPosition,
+        size: fontSize,
+        color: rgb(0, 0, 0),
+      });
+
+      page.drawText(priceText, {
+        x: margin + 300,
+        y: yPosition,
+        size: fontSize,
+        color: rgb(0, 0, 0),
+      });
+
+      page.drawText(totalText, {
+        x: width - margin - 80,
+        y: yPosition,
+        size: fontSize,
+        color: rgb(0, 0, 0),
+      });
+
+      yPosition -= 18;
+      itemsOnCurrentPage++;
+    });
+
+    yPosition -= 10;
+
+    page.drawLine({
+      start: { x: margin, y: yPosition },
+      end: { x: width - margin, y: yPosition },
+      thickness: 2,
+      color: rgb(0, 0, 0),
+    });
+
+    yPosition -= 25;
+
+    page.drawText(`GRAND TOTAL: PKR ${total.toFixed(2)}`, {
+      x: width - margin - 150,
+      y: yPosition,
+      size: subHeaderFontSize,
+      color: rgb(0, 0, 0),
+    });
+
     yPosition -= 40;
 
-    items.forEach((item) => {
-      const itemText = `${item.name} x${item.quantity} @ PKR ${item.price}`;
-      page.drawText(itemText, { x: 50, y: yPosition, size: fontSize });
-      yPosition -= 20;
+    const addressLines = [
+      "Address: Awan Shareef Road, Dawood Plazza",
+      "near Akhtar Public School, JalalPur Sobtain",
+      "Gujrat, Pakistan",
+      "Phone: +92304-0600910, +92313-6978075",
+    ];
+
+    addressLines.forEach((line) => {
+      page.drawText(line, {
+        x: margin,
+        y: yPosition,
+        size: fontSize - 1,
+        color: rgb(0.4, 0.4, 0.4),
+      });
+      yPosition -= 15;
     });
 
-    page.drawText(`Total: PKR ${total}`, {
-      x: 50,
-      y: yPosition - 20,
+    yPosition -= 10;
+    page.drawText("Thank you for your order!", {
+      x: margin,
+      y: yPosition,
       size: fontSize,
+      color: rgb(0, 0, 0),
+    });
+
+    const footerY = 60;
+
+    page.drawLine({
+      start: { x: margin, y: footerY + 25 },
+      end: { x: width - margin, y: footerY + 25 },
+      thickness: 1,
+      color: rgb(0.6, 0.6, 0.6),
+    });
+
+    page.drawText("Developed by: Tajamal Hussain", {
+      x: width / 2 - 85,
+      y: footerY + 10,
+      size: footerFontSize + 1,
+      color: rgb(0.4, 0.4, 0.4),
+    });
+
+    page.drawText("Contact: +92 343 8002540", {
+      x: width / 2 - 75,
+      y: footerY - 5,
+      size: footerFontSize,
+      color: rgb(0.4, 0.4, 0.4),
     });
 
     const pdfBytes = await pdfDoc.save();
     const blob = new Blob([pdfBytes], { type: "application/pdf" });
+
+    const storedInIndexedDB = await storePDFInIndexedDB(invoiceData, blob);
+    if (!storedInIndexedDB) {
+      const pdfDataUrl = URL.createObjectURL(blob);
+      storePDFInLocalStorage(invoiceData, pdfDataUrl);
+    }
+
     saveAs(blob, filename);
 
     return pdfBytes;
@@ -434,7 +764,6 @@ export const downloadInvoiceText = (invoiceData) => {
   const { invoiceNumber, invoiceDate, customerName, items, total } =
     invoiceData;
 
-  // Group items with the same name
   const groupedItems = {};
   items.forEach((item) => {
     if (!groupedItems[item.name]) {
@@ -474,9 +803,12 @@ export const downloadInvoiceText = (invoiceData) => {
   invoiceText += `near Akhtar Public School, JalalPur Sobtain\n`;
   invoiceText += `Gujrat, Pakistan\n`;
   invoiceText += `Phone: +92304-0600910, +92313-6978075\n\n`;
-  invoiceText += `Thank you for your Order!\n`;
+  invoiceText += `Thank you for your Order!\n\n`;
+  invoiceText += `--------------------------------\n`;
+  invoiceText += `Developed by: Tajamal Hussain\n`;
+  invoiceText += `Contact: +92 343 8002540\n`;
+  invoiceText += `--------------------------------\n`;
 
-  // Download as text file
   const blob = new Blob([invoiceText], { type: "text/plain" });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
@@ -526,7 +858,6 @@ export const listStoredPDFs = async () => {
   try {
     const result = { indexedDB: [], localStorage: [] };
 
-    // Get from IndexedDB
     try {
       const db = await initPDFDatabase();
       if (db) {
@@ -552,7 +883,6 @@ export const listStoredPDFs = async () => {
       console.warn("Error accessing IndexedDB:", error);
     }
 
-    // Get from localStorage
     try {
       const localStoragePDFs = JSON.parse(
         localStorage.getItem("invoicePDFs") || "{}"
@@ -581,7 +911,6 @@ export const deletePDF = async (invoiceNumber) => {
   try {
     let deleted = false;
 
-    // Delete from IndexedDB
     try {
       const db = await initPDFDatabase();
       if (db) {
@@ -594,7 +923,6 @@ export const deletePDF = async (invoiceNumber) => {
       console.warn("Error deleting from IndexedDB:", error);
     }
 
-    // Delete from localStorage
     try {
       const localStoragePDFs = JSON.parse(
         localStorage.getItem("invoicePDFs") || "{}"
@@ -620,7 +948,6 @@ export const cleanupOldPDFs = async (keepCount = 20) => {
   try {
     let cleanedCount = 0;
 
-    // Cleanup IndexedDB
     try {
       const db = await initPDFDatabase();
       if (db) {
@@ -634,7 +961,6 @@ export const cleanupOldPDFs = async (keepCount = 20) => {
         });
 
         if (allPDFs.length > keepCount) {
-          // Sort by creation date, keep newest
           allPDFs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
           const toDelete = allPDFs.slice(keepCount);
 
@@ -648,7 +974,6 @@ export const cleanupOldPDFs = async (keepCount = 20) => {
       console.warn("Error cleaning IndexedDB:", error);
     }
 
-    // Cleanup localStorage (already implemented in storePDFInLocalStorage)
     try {
       const localStoragePDFs = JSON.parse(
         localStorage.getItem("invoicePDFs") || "{}"
@@ -685,7 +1010,6 @@ export const getStorageStats = async () => {
       localStorage: { count: 0, totalSize: 0 },
     };
 
-    // IndexedDB stats
     try {
       const db = await initPDFDatabase();
       if (db) {
@@ -708,7 +1032,6 @@ export const getStorageStats = async () => {
       console.warn("Error getting IndexedDB stats:", error);
     }
 
-    // localStorage stats
     try {
       const localStoragePDFs = JSON.parse(
         localStorage.getItem("invoicePDFs") || "{}"
@@ -745,13 +1068,10 @@ export const formatFileSize = (bytes) => {
 // Initialize cleanup on app start (optional)
 export const initializePDFStorage = async () => {
   try {
-    // Initialize IndexedDB
     await initPDFDatabase();
 
-    // Cleanup old files (keep last 20)
     await cleanupOldPDFs(20);
 
-    // Get storage stats
     const stats = await getStorageStats();
 
     return true;
@@ -766,21 +1086,17 @@ export const initializePDFStorage = async () => {
 // For when backend is involved - store PDF metadata in MongoDB
 export const uploadPDFToMongoDB = async (invoiceData, pdfBlob) => {
   try {
-    // This would typically be called from a serverless function
-    // For now, we'll store a reference and the actual PDF in browser storage
     const mongoRecord = {
       invoiceNumber: invoiceData.invoiceNumber,
       customerName: invoiceData.customerName,
       date: invoiceData.invoiceDate,
       createdAt: new Date().toISOString(),
       pdfSize: pdfBlob.size,
-      stored: "browser", // Indicates it's stored in browser storage
+      stored: "browser",
     };
 
-    // Store metadata in localStorage for MongoDB simulation
     const mongoLog = JSON.parse(localStorage.getItem("mongoInvoices") || "[]");
 
-    // Remove existing record for same invoice
     const filteredLog = mongoLog.filter(
       (record) => record.invoiceNumber !== invoiceData.invoiceNumber
     );

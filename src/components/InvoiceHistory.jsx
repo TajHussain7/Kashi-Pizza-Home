@@ -24,7 +24,6 @@ export default function InvoiceHistory({ onClose }) {
     setError(null);
 
     try {
-      // Get invoices using localStorage manager with real-time data
       const historyResult = LocalStorageManager.getInvoiceHistory({
         page: filters.page,
         limit: filters.limit,
@@ -34,7 +33,6 @@ export default function InvoiceHistory({ onClose }) {
         (invoice) => invoice.status !== "deleted"
       );
 
-      // Apply search filter
       if (filters.search) {
         const searchTerm = filters.search.toLowerCase();
         filteredInvoices = filteredInvoices.filter(
@@ -44,7 +42,6 @@ export default function InvoiceHistory({ onClose }) {
         );
       }
 
-      // Apply date filters
       if (filters.dateFrom || filters.dateTo) {
         filteredInvoices = filteredInvoices.filter((invoice) => {
           const invoiceDate = new Date(invoice.savedAt || invoice.timestamp);
@@ -58,7 +55,6 @@ export default function InvoiceHistory({ onClose }) {
         });
       }
 
-      // Sort by date (most recent first)
       filteredInvoices.sort(
         (a, b) =>
           new Date(b.savedAt || b.timestamp) -
@@ -67,7 +63,6 @@ export default function InvoiceHistory({ onClose }) {
 
       setInvoices(filteredInvoices);
 
-      // Update pagination info
       setPagination({
         page: filters.page,
         total: Math.ceil(filteredInvoices.length / filters.limit),
@@ -75,7 +70,6 @@ export default function InvoiceHistory({ onClose }) {
         hasMore: historyResult.hasMore,
       });
 
-      // Calculate summary
       const totalRevenue = filteredInvoices.reduce(
         (sum, invoice) => sum + (invoice.totalAmount || invoice.total || 0),
         0
@@ -120,7 +114,7 @@ export default function InvoiceHistory({ onClose }) {
       try {
         const success = LocalStorageManager.deleteInvoice(invoiceId);
         if (success) {
-          loadInvoiceHistory(); // Reload the list
+          loadInvoiceHistory();
         } else {
           alert("Failed to delete invoice");
         }
@@ -339,23 +333,6 @@ export default function InvoiceHistory({ onClose }) {
               </button>
             </div>
           )}
-
-          {/* Information */}
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <h4 className="font-semibold text-blue-800 mb-2">
-              Storage Information
-            </h4>
-            <ul className="text-sm text-blue-700 space-y-1">
-              <li>
-                • All data is stored locally in your browser's localStorage
-              </li>
-              <li>• Real-time synchronization with menu items and orders</li>
-              <li>
-                • Data persists until manually cleared or browser data is reset
-              </li>
-              <li>• No database connection required - fully offline capable</li>
-            </ul>
-          </div>
         </div>
       </div>
     </div>

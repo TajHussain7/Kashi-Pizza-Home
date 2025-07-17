@@ -18,30 +18,25 @@ export default function App() {
   const [showInvoiceHistory, setShowInvoiceHistory] = useState(false);
   const [invoiceData, setInvoiceData] = useState(null);
 
-  // Force window to 75% size on load and resize
   useEffect(() => {
     const forceWindowSize = () => {
       const targetWidth = Math.floor(window.screen.availWidth * 0.75);
       const targetHeight = Math.floor(window.screen.availHeight * 0.75);
 
-      // Only resize if window size is significantly different from target
       if (
         Math.abs(window.outerWidth - targetWidth) > 50 ||
         Math.abs(window.outerHeight - targetHeight) > 50
       ) {
         window.resizeTo(targetWidth, targetHeight);
 
-        // Center the window
         const left = (window.screen.availWidth - targetWidth) / 2;
         const top = (window.screen.availHeight - targetHeight) / 2;
         window.moveTo(left, top);
       }
     };
 
-    // Apply on load
     forceWindowSize();
 
-    // Apply on resize with debounce
     let resizeTimeout;
     const handleResize = () => {
       clearTimeout(resizeTimeout);
@@ -55,7 +50,6 @@ export default function App() {
     };
   }, []);
 
-  // Complete menu based on KPH menu images
   const defaultCategories = [
     "Burgers",
     "Wraps",
@@ -68,7 +62,6 @@ export default function App() {
   ];
 
   const defaultItems = [
-    // Burger Zone
     { id: 1, name: "Zinger Burger", price: 320, category: "Burgers" },
     { id: 2, name: "Zinger Cheese Burger", price: 380, category: "Burgers" },
     { id: 3, name: "Chicken Burger", price: 250, category: "Burgers" },
@@ -79,7 +72,6 @@ export default function App() {
     { id: 8, name: "Grill Burger", price: 450, category: "Burgers" },
     { id: 9, name: "Mighty Zest", price: 450, category: "Burgers" },
 
-    // Wraps
     { id: 10, name: "Chicken Shawarma (S)", price: 180, category: "Wraps" },
     { id: 11, name: "Chicken Shawarma (L)", price: 250, category: "Wraps" },
     { id: 12, name: "Zinger Shawarma", price: 320, category: "Wraps" },
@@ -90,7 +82,6 @@ export default function App() {
     { id: 17, name: "Chicken Paratha", price: 300, category: "Wraps" },
     { id: 18, name: "Paratha Doner Kabab", price: 400, category: "Wraps" },
 
-    // Regular Pizzas
     {
       id: 19,
       name: "Chicken Tikka",
@@ -141,7 +132,6 @@ export default function App() {
       sizePrices: { Small: 550, Medium: 1000, Large: 1400, Family: 2000 },
     },
 
-    // Special Pizzas
     {
       id: 26,
       name: "Malai Boti Pizza",
@@ -191,7 +181,6 @@ export default function App() {
       category: "Special Pizzas",
     },
 
-    // Starters
     { id: 33, name: "Hot Wings (5 Piece)", price: 300, category: "Starters" },
     { id: 34, name: "Hot Wings (10 Piece)", price: 500, category: "Starters" },
     { id: 35, name: "Hot Shots (5 Piece)", price: 300, category: "Starters" },
@@ -201,12 +190,10 @@ export default function App() {
     { id: 39, name: "Platter", price: 500, category: "Starters" },
     { id: 40, name: "Kabab Bites", price: 550, category: "Starters" },
 
-    // Fries & Sides
     { id: 41, name: "Fries Masrow", price: 350, category: "Fries & Sides" },
     { id: 42, name: "Loaded Fries", price: 500, category: "Fries & Sides" },
     { id: 43, name: "Pasta", price: 500, category: "Fries & Sides" },
 
-    // KPH Super Deals
     {
       id: 44,
       name: "KPH-1: 1 Large Pizza + 4 Zinger + 10 Piece Wings + 1.5 Ltr Drink",
@@ -268,7 +255,6 @@ export default function App() {
       category: "KPH Super Deals",
     },
 
-    // Cold Drinks (Common drinks with estimated prices)
     { id: 54, name: "Pepsi 1.5 Ltr", price: 150, category: "Cold Drinks" },
     { id: 55, name: "Pepsi 1 Ltr", price: 120, category: "Cold Drinks" },
     { id: 56, name: "Pepsi Can", price: 80, category: "Cold Drinks" },
@@ -277,12 +263,9 @@ export default function App() {
     { id: 59, name: "Water Bottle", price: 50, category: "Cold Drinks" },
   ];
 
-  // Load data from localStorage on component mount with real-time sync
   useEffect(() => {
-    // Initialize with defaults if localStorage is empty
     LocalStorageManager.initializeWithDefaults(defaultItems, defaultCategories);
 
-    // Load current data
     const savedItems = LocalStorageManager.getItems();
     const savedCategories = LocalStorageManager.getCategories();
     const savedOrder = LocalStorageManager.getCurrentOrder();
@@ -291,11 +274,9 @@ export default function App() {
     setCategories(savedCategories);
     setCurrentOrder(savedOrder);
 
-    // Initialize PDF storage system
     initializePDFStorage();
   }, []);
 
-  // Real-time localStorage sync - save whenever data changes
   useEffect(() => {
     if (items.length > 0) {
       LocalStorageManager.saveItems(items);
@@ -330,7 +311,6 @@ export default function App() {
     setInvoiceData(newInvoiceData);
     setShowInvoice(true);
 
-    // Save invoice using localStorage manager with real-time sync
     try {
       const invoiceRecord = {
         ...newInvoiceData,
@@ -344,7 +324,6 @@ export default function App() {
 
       const savedInvoice = LocalStorageManager.saveInvoice(invoiceRecord);
       if (savedInvoice) {
-        // Invoice saved successfully to localStorage
       }
     } catch (error) {
       console.error("Error saving invoice to localStorage:", error);
@@ -352,10 +331,8 @@ export default function App() {
   };
 
   const handlePrintInvoice = () => {
-    // Traditional print function
     window.print();
 
-    // Reset order after printing
     setCurrentOrder([]);
     setShowInvoice(false);
     setInvoiceData(null);
@@ -368,7 +345,6 @@ export default function App() {
         `invoice_${invoiceData.invoiceNumber}.pdf`
       );
 
-      // Reset order after PDF generation
       setCurrentOrder([]);
       setShowInvoice(false);
       setInvoiceData(null);
